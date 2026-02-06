@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Farm Protection</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+body{
+    margin:0;
+    font-family:'Poppins', sans-serif;
+    height:100vh;
+    background:
+      linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),
+      url("https://images.unsplash.com/photo-1501004318641-b39e6451bec6");
+    background-size:cover;
+    background-position:center;
+    color:#fff;
+}
+
+.app{
+    max-width:420px;
+    margin:auto;
+    height:100vh;
+    padding:20px;
+    position:relative;
+}
+
+/* Status Bar */
+.status-bar{
+    position:absolute;
+    top:15px;
+    left:15px;
+    font-size:13px;
+    line-height:1.6;
+}
+.status-green{ color:#00ff6a; font-weight:600; }
+.status-red{ color:#ff4d4d; font-weight:600; }
+
+/* Signal Bars */
+.signal{
+    display:inline-flex;
+    gap:3px;
+    margin-left:5px;
+}
+.bar{
+    width:4px;
+    height:6px;
+    background:#555;
+}
+.bar.active{
+    background:#00ff6a;
+}
+
+/* Language */
+.language{
+    position:absolute;
+    top:15px;
+    right:15px;
+}
+.language select{
+    border:none;
+    padding:6px 8px;
+    border-radius:6px;
+}
+
+/* Title */
+.title{
+    text-align:center;
+    font-size:26px;
+    font-weight:600;
+    margin-top:70px;
+}
+
+/* Grid */
+.grid{
+    margin-top:45px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+/* Buttons */
+.box{
+    background:rgba(255,255,255,0.22);
+    backdrop-filter:blur(6px);
+    border-radius:16px;
+    padding:28px 10px;
+    text-align:center;
+    cursor:pointer;
+    transition:0.3s;
+}
+.box:hover{
+    transform:scale(1.05);
+    background:rgba(255,255,255,0.35);
+}
+
+/* Footer */
+.footer{
+    position:absolute;
+    bottom:20px;
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+.care{
+    background:#28a745;
+    padding:10px 14px;
+    border-radius:8px;
+    color:#fff;
+    text-decoration:none;
+}
+.sos{
+    background:red;
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-weight:600;
+    cursor:pointer;
+    box-shadow:0 0 10px rgba(255,0,0,0.7);
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- 🔌 STATUS BAR -->
+<div class="status-bar">
+    AgriGuard: <span id="conn" class="status-green">Connected</span><br>
+    ESP32: <span id="esp" class="status-green">Online</span><br>
+    Signal:
+    <span class="signal" id="signal">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+    </span>
+</div>
+
+<!-- Language -->
+<div class="language">
+    <select onchange="changeLang(this.value)">
+        <option value="en">English</option>
+        <option value="ta">தமிழ்</option>
+    </select>
+</div>
+
+<!-- Title -->
+<div class="title" id="title">FARM PROTECTION</div>
+
+<!-- Buttons -->
+<div class="grid">
+    <div class="box" onclick="igniteFlare()" id="b1">IGNITE FLARES</div>
+    <div class="box" onclick="soundWave()" id="b2">SOUND WAVES</div>
+    <div class="box" id="b3">SEE THERMAL CAMERA</div>
+    <div class="box" id="b4">DISMISS</div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+    <a href="tel:9443447475" class="care" id="care">CUSTOMER CARE</a>
+    <div class="sos" onclick="sos()">SOS</div>
+</div>
+
+</div>
+
+<script>
+/* 🌐 Language */
+const text={
+en:{
+title:"Farm Protection",
+b1:"Ignite Flares",
+b2:"Sound Waves",
+b3:"See Thermal Camera",
+b4:"Dismiss",
+care:"Customer Care",
+flare:"🔥 Flare is ignited in farm land",
+sound:"🔊 Sound frequency is applied in the farm land",
+sos:"🚨 SOS alert sent from farm"
+},
+ta:{
+title:"பண்ணை பாதுகாப்பு",
+b1:"ஃப்ளேர் பற்றவைக்கவும்",
+b2:"ஒலி அலைகள்",
+b3:"வெப்ப கேமரா",
+b4:"நிராகரி",
+care:"வாடிக்கையாளர் சேவை",
+flare:"🔥 பண்ணையில் ஃப்ளேர் பற்றவைக்கப்பட்டது",
+sound:"🔊 பண்ணையில் ஒலி அதிர்வு பயன்படுத்தப்பட்டது",
+sos:"🚨 பண்ணையிலிருந்து SOS அனுப்பப்பட்டது"
+}
+};
+let lang="en";
+
+/* 🌐 Language Change */
+function changeLang(l){
+ lang=l;
+ title.innerText=text[l].title;
+ b1.innerText=text[l].b1;
+ b2.innerText=text[l].b2;
+ b3.innerText=text[l].b3;
+ b4.innerText=text[l].b4;
+ care.innerText=text[l].care;
+}
+
+/* Buttons */
+function igniteFlare(){ alert(text[lang].flare); }
+function soundWave(){ alert(text[lang].sound); }
+function sos(){ alert(text[lang].sos); }
+
+/* 🔌 AUTO CONNECTION + SIGNAL */
+const conn=document.getElementById("conn");
+const esp=document.getElementById("esp");
+const bars=document.querySelectorAll(".bar");
+
+function updateSignal(level){
+ bars.forEach((b,i)=>{
+   b.classList.toggle("active", i < level);
+ });
+}
+
+setInterval(()=>{
+ const connected = Math.random() > 0.2; // 80% connected
+ if(connected){
+   conn.innerText="Connected";
+   conn.className="status-green";
+   esp.innerText="Online";
+   esp.className="status-green";
+   updateSignal(Math.floor(Math.random()*4)+1);
+ }else{
+   conn.innerText="Disconnected";
+   conn.className="status-red";
+   esp.innerText="Offline";
+   esp.className="status-red";
+   updateSignal(0);
+ }
+}, 4000);
+</script>
+
+</body>
+</html>
